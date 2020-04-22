@@ -1,2 +1,2 @@
 # kneed_compass_gait
-Trajectory optimization of a kneed walker with knees
+Trajectory optimization of a dynamic walker with knees
