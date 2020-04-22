@@ -1,0 +1,169 @@
+<?xml version="1.0" ?>
+
+<robot name="compass_gait">
+
+  <!-- ground -->
+  <!-- just for visualization, it is welded to world -->
+
+  <!-- We create the link that represents the ground.
+  It is just a box-->
+  <link name="ground">
+    <visual>
+      <!-- We set the middle point in the bottom of the box as the origin (NOT THE TOP)-->
+      <origin xyz="0 0 -.25" rpy="0 0 0"/>
+      <geometry>
+        <box size="10 1 .5" />
+      </geometry>
+      <material name="green">
+        <color rgba="0 1 0 1" />
+      </material>
+    </visual>
+  </link>
+
+ <!-- We simply connect the origin of the link frame to the world frame-->
+  <joint name="ground_is_world" type="fixed">
+    <parent link="world" />
+    <child link="ground" />
+    <!-- slope of the ramp here -->
+    <origin xyz="0 0 0" rpy="0 .04 0"/>
+  </joint>
+
+  <!-- floating base for stance foot -->
+
+  <link name="floating_base_x" />
+
+  <!-- Prismatic means that you can move along this direciton -->
+  <joint name="floating_base_x" type="prismatic">
+    <!-- Connected to the ground so that the axis is parallell with the ground-->
+    <parent link="ground"/>
+    <child link="floating_base_x"/>
+    <!-- Axis tells us that we want to rotate about the x-axis
+    (even though no rotation should occur)-->
+    <axis xyz="1 0 0"/>
+  </joint>
+
+  <link name="floating_base_z" />
+
+  <joint name="floating_base_z" type="prismatic">
+    <!-- The parent frame is x, because we want the height z to be relative 
+    to the x-position as seen in exercise 4.1-->
+    <parent link="floating_base_x"/>
+    <child link="floating_base_z"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- stance leg -->
+
+  <link name="stance_leg">
+
+    <inertial>
+      <origin xyz="0 0 .5"/>
+      <mass value=".1"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 .5"/>
+      <geometry>
+        <sphere radius=".05"/>
+      </geometry>
+      <material>
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+
+    <visual>
+      <origin xyz="0 0 .5"/>
+      <geometry>
+        <cylinder length="1" radius=".01"/>
+      </geometry>
+      <material>
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+
+  </link>
+
+  <joint name="floating_base_y" type="continuous">
+
+    <parent link="floating_base_z"/>
+    <child link="stance_leg"/>
+    <!-- -1 because the y-axis is pointing into the plane,
+    which would lead to positive rotation being clockwise from
+    our point of view-->
+    <axis xyz="0 -1 0"/>
+
+  </joint>
+
+  <!-- body, welded to stance leg -->
+
+  <link name="body">
+
+    <inertial>
+    <!-- Why is the origin at 1 and not 0.5
+     as that is the distance from the stance leg's origin to the body mass-->
+      <origin xyz="0 0 1"/>
+      <mass value="1"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius=".1"/>
+      </geometry>
+      <material>
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+
+  </link>
+
+  <!--The body is fixed because there is no rotation between the stance leg and the body
+  for the compass gait, only between the body and the swing leg-->
+  <joint name="body_on_stance_leg" type="fixed">
+
+    <parent link="stance_leg" />
+    <child link="body" />
+    <origin xyz="0 0 1"/>
+
+  </joint>
+
+  <!-- swing leg -->
+
+  <link name="swing_leg">
+
+    <inertial>
+      <origin xyz="0 0 -.5"/>
+      <mass value=".1"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 -.5"/>
+      <geometry>
+        <sphere radius=".05"/>
+      </geometry>
+      <material>
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+
+    <visual>
+      <origin xyz="0 0 -.5"/>
+      <geometry>
+        <cylinder length="1" radius=".01"/>
+      </geometry>
+      <material>
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+
+  </link>
+
+  <joint name="hip_pin" type="continuous">
+
+    <parent link="body"/>
+    <child link="swing_leg"/>
+    <axis xyz="0 -1 0"/>
+
+  </joint>
+
+</robot>
