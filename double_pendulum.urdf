@@ -3,6 +3,10 @@
 <robot xmlns="http://drake.mit.edu"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://drake.mit.edu ../../doc/drakeURDF.xsd" name="SimpleDoublePendulum">
+
+    <!--First we define some colors that can later be called by using:
+    <material name="black" />
+    -->
   <material name="black">
     <color rgba="0 0 0 1" />
   </material>
@@ -10,6 +14,9 @@
     <color rgba=".6 .2 .2 1" />
   </material>
 
+    <!-- Defining the position and mass properties of the base point.
+    This point is later connected to the world frame, and acts as the
+    link between the world frame and the pendulum-->
   <link name="base">
     <inertial>
       <origin xyz="0 0 0" />
@@ -17,10 +24,14 @@
       <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
     </inertial>
   </link>
+
+  <!--A joint is made between the world frame and the base 
+  which the rest of the system is connected to-->
   <joint name="base_weld" type="fixed">
     <parent link="world" />
     <child link="base" />
   </joint>
+
 
   <link name="upper_arm">
     <inertial> 
@@ -43,15 +54,21 @@
       <material name="MITred" />
     </visual>
   </link>
+
+  <!--The upper arm is connected to the base which acts as a shoulder
+  as the upper arm can rotate about the base-->
   <joint name="shoulder" type="continuous">
     <parent link="base"/>
     <child link="upper_arm" />
+    <!-- The upper arm rotates about the y-axis-->
     <axis xyz="0 1 0" />
     <dynamics damping="0.1" />
   </joint>
+  <!-- This is one of our actuators to control the shoulder-->
   <transmission type="SimpleTransmission" name="shoulder_trans">
     <actuator name="shoulder" />
     <joint name="shoulder" />
+    <!-- This is the gear reduction ratio probably-->
     <mechanicalReduction>1</mechanicalReduction>
   </transmission>
 
@@ -76,6 +93,9 @@
       <material name="MITred" />
     </visual>
   </link>
+
+  <!-- Note that the lower arm is connected directly to the upper arm
+  there is no intermediate link/rotation joint inbetween-->
   <joint name="elbow" type="continuous">
     <parent link="upper_arm"/>
     <origin xyz="0 0 -1" />

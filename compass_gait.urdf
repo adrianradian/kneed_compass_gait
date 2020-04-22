@@ -89,7 +89,7 @@
     <child link="stance_leg"/>
     <!-- -1 because the y-axis is pointing into the plane,
     which would lead to positive rotation being clockwise from
-    our point of view-->
+    our point of views-->
     <axis xyz="0 -1 0"/>
 
   </joint>
@@ -110,7 +110,7 @@
       <geometry>
         <sphere radius=".1"/>
       </geometry>
-      <material>
+      <material>-
         <color rgba="1 1 1 1"/>
       </material>
     </visual>
